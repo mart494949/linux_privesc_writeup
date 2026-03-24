@@ -18,9 +18,12 @@ pełnej kontroli nad systemem.
 
 ### 1. Service Exploit — MySQL
 **Mechanizm:** MySQL działał jako root z pustym hasłem. 
+
 **Exploitacja:** Użyłem exploita EDB-ID: 1518 (2006) który wykonuje 
 kod w kontekście procesu MySQL. 
+
 **Dlaczego działa:** Uzyłem niezabezpieczonego hasłem MySQL do uzyskania powłoki roota poprzez exploit z 2006 roku o EDB-ID: 1518. MySQL działał jako root więc kod wykonany przez MySQL miał uprawnienia roota. 
+
 **Efekt:** Shell roota. 
 
 ### 2. Złe Uprawnienia — /etc/shadow
