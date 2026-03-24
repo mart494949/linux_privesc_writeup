@@ -2,7 +2,7 @@
 **Platforma:** TryHackMe  
 **Room:** Linux PrivEsc  
 **Data:** Marzec 2026  
-**Poziom:** Beginner/Intermediate
+**Poziom:** Beginner/Intermediate 
 
 ## Środowisko
 Maszyna docelowa: Debian Linux  
@@ -17,26 +17,26 @@ Celem privilege escalation jest uzyskanie uprawnień roota —
 pełnej kontroli nad systemem.
 
 ### 1. Service Exploit — MySQL
-**Mechanizm:** MySQL działał jako root z pustym hasłem.
+**Mechanizm:** MySQL działał jako root z pustym hasłem. 
 **Exploitacja:** Użyłem exploita EDB-ID: 1518 (2006) który wykonuje 
-kod w kontekście procesu MySQL.
-**Dlaczego działa:** Uzyłem niezabezpieczonego hasłem MySQL do uzyskania powłoki roota poprzez exploit z 2006 roku o EDB-ID: 1518. MySQL działał jako root więc kod wykonany przez MySQL miał uprawnienia roota.
-**Efekt:** Shell roota.
+kod w kontekście procesu MySQL. 
+**Dlaczego działa:** Uzyłem niezabezpieczonego hasłem MySQL do uzyskania powłoki roota poprzez exploit z 2006 roku o EDB-ID: 1518. MySQL działał jako root więc kod wykonany przez MySQL miał uprawnienia roota. 
+**Efekt:** Shell roota. 
 
 ### 2. Złe Uprawnienia — /etc/shadow
-**Mechanizm:** Plik /etc/shadow posiada hashe wszystkich uzytkownikow i standardowo jest do odczytu tylko przez roota.
-**Exploitacja:** Odczytalem plik /etc/shadow poprzez błąd w dostępie do pliku.
-**Narzędzie:** John the Ripper, po odczytaniu hasha uruchomiłem na mojej maszynie, lokalnie program i byłem w stanie uzyskać hasło. Jest to groźne dlatego, że łamanie bylo offline i nie zostawiło logów
-**Efekt:** Uzyskanie hasła roota.
+**Mechanizm:** Plik /etc/shadow posiada hashe wszystkich uzytkownikow i standardowo jest do odczytu tylko przez roota. 
+**Exploitacja:** Odczytalem plik /etc/shadow poprzez błąd w dostępie do pliku. 
+**Narzędzie:** John the Ripper, po odczytaniu hasha uruchomiłem na mojej maszynie, lokalnie program i byłem w stanie uzyskać hasło. Jest to groźne dlatego, że łamanie bylo offline i nie zostawiło logów. 
+**Efekt:** Uzyskanie hasła roota. 
 
 ### 3. Sudo Exploit — apache2 (File Disclosure)
-**Mechanizm:** Plik /etc/shadow nie był dostępny bezpośrednio.
+**Mechanizm:** Plik /etc/shadow nie był dostępny bezpośrednio. 
 Znalazłem technikę na GTFOBins wykorzystującą apache2.
-**Exploitacja:** sudo apache2 -C 'Include /etc/shadow'
+**Exploitacja:** sudo apache2 -C 'Include /etc/shadow'. 
 **Dlaczego działa:** Apache próbował sparsować /etc/shadow 
 jako plik konfiguracyjny. Nie rozumiejąc składni hashy — 
-ujawnił hash roota w komunikacie błędu.
-**Efekt:** Hash roota ujawniony bez bezpośredniego dostępu do pliku.
+ujawnił hash roota w komunikacie błędu. 
+**Efekt:** Hash roota ujawniony bez bezpośredniego dostępu do pliku. 
 
 ### 4. PATH Hijacking
 **Mechanizm:** Zmienna PATH określa kolejność katalogów 
