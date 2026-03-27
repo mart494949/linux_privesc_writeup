@@ -52,20 +52,43 @@ w których system szuka programów. Przeszukiwane są od lewej do prawej.
 **Efekt:** Shell roota.  
 
 ### 5. LD_PRELOAD
-**Mechanizm:** Biblioteki dynamiczne są ładowane w momencie 
-uruchomienia programu — nie podczas kompilacji.
-LD_PRELOAD pozwala wskazać bibliotekę która zostanie 
-załadowana pierwsza, przed wszystkimi innymi.  
-**Podatność:** Program był dostępny przez sudo (sudo -l).
-Sudo zachowało zmienną LD_PRELOAD — co jest błędem konfiguracji.  
+**Mechanizm:** Biblioteki dynamiczne są ładowane w momencie uruchomienia programu nie podczas kompilacji. LD_PRELOAD pozwala wskazać bibliotekę która zostanie załadowana pierwsza, przed wszystkimi innymi.  
+**Podatność:** Program był dostępny przez sudo (sudo -l). Sudo zachowało zmienną LD_PRELOAD — co jest błędem konfiguracji.  
 **Exploitacja:** 
 1. Skompilowałem złośliwą bibliotekę .so, która umożliwia uzyskanie shell roota
 2. Ustawiłem LD_PRELOAD wskazując na tę bibliotekę
 3. Uruchomiłem program przez sudo
-4. System załadował moją bibliotekę PRZED właściwymi — 
-   wykonała się jako root
+4. System załadował moją bibliotekę PRZED właściwymi, wykonała się jako root
 **Różnica względem PATH Hijacking:** 
-PATH podmienia program, LD_PRELOAD podmienia bibliotekę 
-ładowaną przez program.  
+PATH podmienia program, LD_PRELOAD podmienia bibliotekę ładowaną przez program.  
 **Efekt:** Shell roota.  
 
+### 6. Crontab
+**Mechanizm:** Crontab wykonuje zadania cyklicznie czyli jeśli zadanie jest uruchamiane przez roota, to złośliwy kod również wykona się jako root.  
+**Podatność:** Plik wykonywany co minutę byl źle skonfigurowany, mógł zmienić go każdy.  
+**Exploitacja:** Zmieniłem skrypt, który pozwolił mi połączyć sie mojej maszynie jako root.  
+**Efekt:** Shell roota.  
+
+### 7. SSH Key
+**Mechanizm:** Klucz SSH składa się z pary: prywatny (u klienta) i publiczny (na serwerze). Posiadanie klucza prywatnego zastępuje hasło. Umożliwia logowanie bez jego znajomości.  
+**Podatność:** Klucz prywatny roota znajdował się w /.ssh/ z błędnymi uprawnieniami, był czytelny dla każdego użytkownika.  
+**Exploitacja:** Skopiowałem klucz prywatny na swoją maszynę i użyłem go do zalogowania jako root: ssh -i id_rsa root@[IP]  
+**Efekt:** Dostęp jako root bez znajomości hasła.  
+
+### 8. History/Config files
+**Mechanizm:** Mechanizm jest bardzo prosty lecz ciężki do uniknięcia w 100%. Jest to groźne z powodu braku generowania alertów, jest to ciche rozwiązanie
+**Podatność:**  Polega na odczytaniu historii komend uzytych np cat .bash_history lub config.php i znalezienia wrażliwych danych z punktu widzenia systemu.
+**Exploitacja:** odczyt plikow
+**Efekt:** dostęp do wrazliwych danych
+
+## Wnioski dla Blue Teamu
+
+### Co wykryć i jak zapobiec:
+**MySQL Service** : Aktualizacja, ponieważ exploit ktory wykorzystalem jest z 2006 roku. Serwis nie powinien działać jako root, zastosować zasadę least privilege.  
+**/etc/shadow** : Właściwe ograniczenie uprawnień.  
+**apache2 sudo** :  Ograniczenie używania przez sudo.  
+**PATH Hijacking** : Podawanie pełnej ścieżki do pliku ktory ma zostac wykonany.  
+**LD_PRELOAD** : Sudo nie powinien zachowywać zmiennej LD_PRELOAD.  
+**Crontab** : Ograniczenie uprawnien do plików wykonywanych.  
+**SSH Key** : Dobre schowanie klucza a nie tylko ukrycie.  
+**History/Config** : Hasła nie powinny być przechowywane w plikach konfiguracyjnych jako plaintext. Należy używać secrets managera lub zmiennych środowiskowych.  
