@@ -9,6 +9,12 @@ Maszyna docelowa: Debian Linux
 Cel: eskalacja uprawnień z użytkownika "user" do "root"  
 Punkt startowy: shell z ograniczonymi uprawnieniami
 
+## Narzędzia
+- John the Ripper - łamanie hashy offline  
+- GTFOBins - baza podatnych binariów  
+- gcc - kompilacja exploitów w C  
+- msfvenom - generowanie payloadów  
+
 ## Wprowadzenie
 Po uzyskaniu początkowego dostępu do maszyny dysponuję shellem 
 z ograniczonymi uprawnieniami — mogę wykonywać tylko część komend, 
@@ -78,7 +84,7 @@ PATH podmienia program, LD_PRELOAD podmienia bibliotekę ładowaną przez progra
 ### 8. History/Config files
 **Mechanizm:** Mechanizm jest bardzo prosty lecz ciężki do uniknięcia w 100%. Jest to groźne z powodu braku generowania alertów, jest to ciche rozwiązanie
 **Podatność:**  Polega na odczytaniu historii komend uzytych np cat .bash_history lub config.php i znalezienia wrażliwych danych z punktu widzenia systemu.
-**Exploitacja:** odczyt plikow
+**Exploitacja:** cat ~/.bash_history - historia komend z hasłami. cat config.php - hasła do bazy danych w plaintext
 **Efekt:** dostęp do wrazliwych danych
 
 ## Wnioski dla Blue Teamu
@@ -92,3 +98,6 @@ PATH podmienia program, LD_PRELOAD podmienia bibliotekę ładowaną przez progra
 **Crontab** : Ograniczenie uprawnien do plików wykonywanych.  
 **SSH Key** : Dobre schowanie klucza a nie tylko ukrycie.  
 **History/Config** : Hasła nie powinny być przechowywane w plikach konfiguracyjnych jako plaintext. Należy używać secrets managera lub zmiennych środowiskowych.  
+
+## Kluczowy wniosek
+Największym zagrożeniem nie są skomplikowane exploity lecz błędy konfiguracji i złe zarządzanie uprawnieniami, które są trudne do wykrycia przez Blue Team.
